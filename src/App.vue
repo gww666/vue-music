@@ -1,23 +1,36 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
+    <m-header></m-header>
+    <tabs></tabs>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
+     
   </div>
 </template>
 
 <script>
+import MHeader from "./components/m-header/m-header";
+import Tabs from "./components/tabs/tabs";
 export default {
-  name: 'app'
+  name: 'app',
+  components : {
+    "m-header" : MHeader,
+    "tabs" : Tabs
+  }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus" rel="stylesheet/stylus">
+  // @import "~common/stylus/reset.styl"
+  // @import "~common/stylus/variable.styl";
+  // body
+  //   background: $color-background
+    //改变小点样式
+    .mint-swipe-indicator
+        background: #999
+        opacity: 0.6
+    .mint-swipe-indicators .is-active 
+        background: #fff
+        opacity: 0.6
 </style>
