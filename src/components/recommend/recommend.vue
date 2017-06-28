@@ -1,6 +1,6 @@
 <template>
     <div class="recommend">
-        <scroll :songlist="songlist" class="recommend-content">
+        <scroll :songlist="songlist" class="recommend-content" ref="scroll">
             <div>
                 <div class="banner" :style="{height : bannerHeight + 'px'}">
                     <swipe :auto="4000" class="banner-swipe">
@@ -12,7 +12,7 @@
                     <ul>
                         <li v-for="item in songlist" class="item">
                         <div class="icon">
-                            <img width="60" height="60" :src="item.imgurl">
+                            <img width="60" height="60" :src="item.imgurl" @load="bannerImgLoaded">
                         </div>
                         <div class="text">
                             <h2 class="name" v-html="item.creator.name"></h2>
@@ -73,7 +73,17 @@ import MScroll from "../../base/scroll/scroll";
             },
             //初始化banner高度值
             initBannerHeight() {
+            },
+            bannerImgLoaded () {
+                if (!this.bannerImgChecked) {
+                    this.bannerImgChecked = true;
+                    console.log("只检查一次图片是否加载完成");
+                    setTimeout(() => {
+                        this.$refs.scroll.refresh();
+                    }, 20);
+                }
             }
+
         },
         created () {
             this.getData();
