@@ -17,9 +17,13 @@
                 type : Boolean,
                 default : true
             },
-            songlist : {
+            list : {
                 type : Array,
                 default : []
+            },
+            listenScroll : {
+                type : Boolean,
+                default : false
             }
         },
         methods : {
@@ -32,6 +36,13 @@
                     propTybe : this.propTybe,
                     click : this.click
                 });
+                //如果监听scroll，绑定一个滚动事件
+                if (this.listenScroll) {
+                    console.log("ssss");
+                    this.scroll.on('scroll', (pos) => {
+                        this.$emit('scroll', pos)
+                    });
+                }
             },
             enable () {
                 this.scroll && this.scroll.enable();
@@ -39,6 +50,17 @@
             refresh () {
                 // console.log("this.scroll", this.scroll);
                 this.scroll && this.scroll.refresh();
+            },
+            disable () {
+                this.scroll && this.scroll.disable();
+            },
+            scrollTo () {
+                //x, y, time, easing
+                this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+            },
+            scrollToElement () {
+                //el, time, offsetX, offsetY, easing
+                this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
             }
         },
         mounted () {
@@ -47,9 +69,10 @@
             }, 20);
         },
         watch : {
-            songlist : function () {
+            list : function () {
                 setTimeout(() => {
-                    console.log("data变化");
+                    // console.log("data变化");
+                    // console.log(this.list.length);
                     this.refresh();
                 }, 20);
             }

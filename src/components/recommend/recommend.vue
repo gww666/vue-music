@@ -1,10 +1,14 @@
 <template>
     <div class="recommend">
-        <scroll :songlist="songlist" class="recommend-content" ref="scroll">
+        <scroll :list="songlist" class="recommend-content" ref="scroll">
             <div>
                 <div class="banner" :style="{height : bannerHeight + 'px'}">
                     <swipe :auto="4000" class="banner-swipe">
-                        <swipe-item v-for="(item, index) in sliderList" :key="index" class="banner-item"><img :src="item.picUrl" alt="" class="banner-img" :style="{height : bannerHeight + 'px'}"></swipe-item>
+                        <swipe-item v-for="(item, index) in sliderList" :key="index" class="banner-item">
+                            <a :href="item.linkUrl">
+                                <img :src="item.picUrl" alt="" class="banner-img needsclick" :style="{height : bannerHeight + 'px'}" @load="bannerImgLoaded">
+                            </a>
+                        </swipe-item>
                     </swipe>
                 </div>
                 <div class="recommend-list">
@@ -12,7 +16,7 @@
                     <ul>
                         <li v-for="item in songlist" class="item">
                         <div class="icon">
-                            <img width="60" height="60" :src="item.imgurl" @load="bannerImgLoaded">
+                            <img width="60" height="60" v-lazy="item.imgurl">
                         </div>
                         <div class="text">
                             <h2 class="name" v-html="item.creator.name"></h2>
@@ -23,6 +27,9 @@
                 </div>
             </div>
         </scroll>
+        <div class="loading-container" v-show="!songlist.length">
+            <loading></loading>
+        </div>
     </div>
     
 </template>
@@ -31,6 +38,7 @@ import {getBanner, getSongList} from '../../api/recommend';
 import {RESPONSE_OK} from "../../api/config";
 import { Swipe, SwipeItem } from 'mint-ui';
 import MScroll from "../../base/scroll/scroll";
+import Loading from "../../base/loading/loading";
 
     export default {
         data () {
@@ -91,7 +99,8 @@ import MScroll from "../../base/scroll/scroll";
         components : {
             "swipe" : Swipe,
             "swipe-item" : SwipeItem,
-            "scroll" : MScroll
+            "scroll" : MScroll,
+            "loading" : Loading
         },
         mounted () {
             setTimeout(() => {
