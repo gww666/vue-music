@@ -9,6 +9,7 @@
     import {RESPONSE_OK} from "../../api/config";
     import ListView from "../../base/listview/listview";
     import ListView1 from "../../base/listview/listview1";
+    import Singer from "../../common/js/singer";
     export default {
         data () {
             return {
@@ -31,11 +32,11 @@
                 list.forEach((item, index) => {
                     //热门歌手取前10个
                     if (index < 10) {
-                        obj.hot.items.push({
+                        obj.hot.items.push(new Singer({
                             name : item.Fsinger_name,
                             id : item.Fsinger_id,
-                            img : `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`
-                        });
+                            img : item.Fsinger_mid
+                        }));
                     }
                     if (!obj[item.Findex]) {
                         obj[item.Findex] = {
@@ -43,11 +44,11 @@
                             items : []
                         }
                     }
-                    obj[item["Findex"]].items.push({
-                        name : item.Fsinger_name,
-                        id : item.Fsinger_id,
-                        img : `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`
-                    });
+                    obj[item["Findex"]].items.push(new Singer({
+                            name : item.Fsinger_name,
+                            id : item.Fsinger_id,
+                            img : item.Fsinger_mid
+                        }));
                 });
                 //对obj进行排序，得到有序数组
                 //首先进行分类
