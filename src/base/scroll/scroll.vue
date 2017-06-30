@@ -9,7 +9,7 @@
 
     export default {
         props : {
-            propTybe : {
+            probeType : {
                 type : Number,
                 default : 1
             },
@@ -33,14 +33,16 @@
                     return false;
                 }
                 this.scroll = new BScroll(this.$refs.wrapper, {
-                    propTybe : this.propTybe,
+                    probeType : this.probeType,
                     click : this.click
                 });
+                console.log(this.scroll);
                 //如果监听scroll，绑定一个滚动事件
                 if (this.listenScroll) {
-                    console.log("ssss");
+                    // console.log("ssss");
                     this.scroll.on('scroll', (pos) => {
-                        this.$emit('scroll', pos)
+                        // console.log("ssss");
+                        this.$emit('mscroll', pos)
                     });
                 }
             },

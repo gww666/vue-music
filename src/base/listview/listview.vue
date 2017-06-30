@@ -4,8 +4,8 @@
         class="listview" 
         ref="scroll"
         :listen-scroll="listenScroll"
-        @scroll="scroll"
-        :propType="propType"
+        @mscroll="handleMScroll"
+        :probeType="probeType"
     >
         <ul>
             <li v-for="group in data" class="list-group" ref="listGroup">
@@ -22,10 +22,24 @@
         <div class="list-shortcut" @touchstart.stop.prevent="shortcutsTouchStart"
             @touchmove.prevent.stop="shortcutsTouchMove">
             <ul>
-                <li v-for="(item, index) in shortcuts" class="item" :data-index="index">
+                <li v-for="(item, index) in shortcuts" class="item" :data-index="index"
+                    :class="{'current' : currentIndex === index}">
                     {{item}}
                 </li>
             </ul>
+        </div>
+        <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+            <div class="fixed-title">
+                {{fixedTitle}}
+                <!--
+                    <i class="iconfont">&#xe619;</i>
+                -->
+            </div>
+        </div>
+        <!-- Loading组件 -->
+
+        <div class="loading-container" v-show="!data.length">
+            <loading></loading>
         </div>
     </scroll>
     
@@ -34,6 +48,7 @@
 <script>
     import Scroll from "../scroll/scroll";
     import {getData} from "../../common/js/dom";
+    import Loading from "../loading/loading";
     //定义一个锚点（anchor）的高度，便于计算手指划过几个anchor
     const anchorHeight = 18;
     export default {
@@ -46,20 +61,30 @@
         data () {
             return {
                 // listenScroll : true
+                scrollY : 0,
+                heightList : [],
+                currentIndex : 0,
+                diff : -1
             }
         },
         computed : {
             shortcuts () {
                 return this.data.map((item, index) => item.title.slice(0, 1));
+            },
+            fixedTitle () {
+                if (this.scrollY >= 0) {
+                    return "";
+                }
+                return this.data.length > 0 ? this.data[this.currentIndex].title : "";
             }
         },
         components : {
-            "scroll" : Scroll
+            "scroll" : Scroll,
+            "loading" : Loading
         },
         methods : {
             shortcutsTouchStart (event) {
                 // console.log(event);
-                
                 let index = getData(event.target, "index");
                 this.touch.anchorIndex = index;
                 this.touch.pageY = event.touches[0].pageY;
@@ -75,11 +100,25 @@
                 // console.log(moveAnchorIndex);
                 this._scrollTo(moveAnchorIndex);
             },
-            scroll (...rest) {
-                // console.log(rest);
-                console.log(11111111111);
+            handleMScroll (pos) {
+                let heightList = this.heightList;
+                this.scrollY = pos.y;
+            },
+            //计算每个栏目的高度
+            getHeightList () {
+                let height = 0;//第一组高度为0
+                this.heightList.push(height);
+                let list = this.$refs.listGroup;
+                // console.log(list[0].offsetTop);
+                for (let i = 0; i < list.length; i++) {
+                    let item = list[i];
+                    height += item.offsetHeight;
+                    this.heightList.push(height);
+                }
             },
             _scrollTo(index) {
+                this.scrollY = -(this.heightList[index]);
+                // console.log(this.scrollY);
                 this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0);
             }
         },
@@ -89,8 +128,42 @@
             //是否监听滚动的flag值
             this.listenScroll = true;
             //
-            this.propType = 3;
-            
+            this.probeType = 3;
+        },
+        watch : {
+            data () {
+                console.log("data发生变化");
+                setTimeout(() => {
+                    this.getHeightList();
+                    console.log(this.heightList);
+                }, 20);
+            },
+            scrollY (newY, oldY) {
+                const heightList = this.heightList;
+                for (let i = 0; i < heightList.length - 1; i++) {
+                    let h1 = heightList[i];
+                    let h2 = heightList[i + 1];
+                    if (-newY >= h1 && -newY < h2) {
+                        this.currentIndex = i;
+                        this.diff = newY + h2;
+                        break;
+                    }
+                }
+            },
+            diff (newDiff) {
+                let fixedHeight = this.$refs.fixed.offsetHeight;
+                let translateY = newDiff < fixedHeight ? newDiff - fixedHeight : 0;
+                // if (translateY === 0) {
+                //     return false;
+                // }
+                // this.translateY = translateY;
+                // console.log(fixedHeight);
+                // console.log(this.diff);
+                // if (this.diff < fixedHeight) {
+                    console.log("fixedHeight");
+                    this.$refs.fixed.style.transform = `translate3d(0, ${translateY}px, 0)`;
+                // }
+            }
         }
     }
 </script>

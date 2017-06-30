@@ -8,6 +8,7 @@
     import getSingerList from "../../api/singer";
     import {RESPONSE_OK} from "../../api/config";
     import ListView from "../../base/listview/listview";
+    import ListView1 from "../../base/listview/listview1";
     export default {
         data () {
             return {
@@ -15,7 +16,8 @@
             }
         },
         components : {
-            "listview" : ListView
+            "listview" : ListView,
+            "listview1" : ListView1
         },
         methods : {
             //对数据进行二次处理
@@ -79,6 +81,7 @@
                 if (data.code === RESPONSE_OK) {
                     // this.singerList = data.data.list;
                     this.singerList = this.handleData(data.data.list);
+                    // console.log("singerList", this.singerList);
                 }
                 // console.log("singerlist", data);
             });
