@@ -3,12 +3,14 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import store from "./store";
 import fastclick from "fastclick";
 import VueLazyload from 'vue-lazyload';
 //基础样式
 import "./common/stylus/index.styl";
 // import 'element-ui/lib/theme-default/index.css'
-import 'mint-ui/lib/style.css';
+// import 'mint-ui/lib/style.css';
+
 
 Vue.use(VueLazyload, {
   loading : require('./common/image/default.png')
@@ -23,5 +25,6 @@ fastclick.attach(document.body);
 new Vue({
   el: '#app',
   router,
+  store,
   render : h => h(App)
 })

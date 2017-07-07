@@ -1,6 +1,7 @@
 <template>
     <div class="singer">
-        <listview :data="singerList"></listview>
+        <listview :data="singerList" @select="handleSelect"></listview>
+        <router-view></router-view>
     </div>
 
 </template>
@@ -8,7 +9,9 @@
     import getSingerList from "../../api/singer";
     import {RESPONSE_OK} from "../../api/config";
     import ListView from "../../base/listview/listview";
-    import ListView1 from "../../base/listview/listview1";
+    // import ListView1 from "../../base/listview/listview1";
+    import * as types from "../../store/mutation-type";
+    import {mapMutations} from "vuex";
     export default {
         data () {
             return {
@@ -17,11 +20,15 @@
         },
         components : {
             "listview" : ListView,
-            "listview1" : ListView1
+            // "listview1" : ListView1
         },
         methods : {
+            ...mapMutations([
+                types.SINGER_UPDATE
+            ]),
             //对数据进行二次处理
             handleData (list) {
+                // console.log(list);
                 let obj = {
                     hot : {
                         title : "热门",
@@ -33,7 +40,7 @@
                     if (index < 10) {
                         obj.hot.items.push({
                             name : item.Fsinger_name,
-                            id : item.Fsinger_id,
+                            id : item.Fsinger_mid,
                             img : `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`
                         });
                     }
@@ -45,7 +52,7 @@
                     }
                     obj[item["Findex"]].items.push({
                         name : item.Fsinger_name,
-                        id : item.Fsinger_id,
+                        id : item.Fsinger_mid,
                         img : `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`
                     });
                 });
@@ -72,6 +79,11 @@
 
                 // console.log(obj);
                 return hot.concat(normal);
+            },
+            handleSelect (singer) {
+                //存入vuex
+                this.SINGER_UPDATE(singer);
+                this.$router.push(`/singer/${singer.id}`);
             }
 
         },

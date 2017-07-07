@@ -1,0 +1,1 @@
+export const SINGER_UPDATE = "SINGER_UPDATE";
