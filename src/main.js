@@ -9,7 +9,7 @@ import VueLazyload from 'vue-lazyload';
 //基础样式
 import "./common/stylus/index.styl";
 // import 'element-ui/lib/theme-default/index.css'
-// import 'mint-ui/lib/style.css';
+import 'mint-ui/lib/style.css';
 
 
 Vue.use(VueLazyload, {
